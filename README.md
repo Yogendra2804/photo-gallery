@@ -1,41 +1,42 @@
-# Photo Gallery — Celebrare Frontend Intern Assignment
+# FRAME INDEX — Visual Photo Archive
 
-A responsive photo gallery web app built with React, Vite, and Tailwind CSS as part of Celebrare's frontend React internship pre-screening.
+A visual photo archive built with React, Vite, and Tailwind CSS for Celebrare's Frontend React Internship assignment. Designed with an editorial Swiss-style layout, custom typography (Space Grotesk + IBM Plex Mono), and restrained high-contrast accents (electric blue, acid lime, warm orange).
 
 ## What it does
 
-- Fetches 30 photos from the Picsum Photos public API on load
-- Displays them in a responsive grid (1 / 2 / 4 columns depending on screen size)
-- Shows each photo's author name
-- Lets you search photos by author name in real time
-- Lets you mark/unmark photos as favourites using a heart button
-- Remembers your favourites across page refreshes using localStorage
+- Fetches 30 photos from the Picsum Photos API on initial load
+- 3-column responsive layout: left navigation sidebar, central gallery workspace, and right-side interactive import drawer
+- Displays photos in a 4-column responsive grid on desktop (2 on tablet, 1 on mobile)
+- Metadata strip on every card with frame numbers (`#001`), photographer names, and interactive heart favourite buttons
+- Real-time author search filtering without re-fetching or reloading
+- Favourites state managed strictly via `useReducer`, persisted across browser refreshes via `localStorage`
+- Interactive right-side import panel prototype for discovering collections and selecting frames
 
 ---
 
 ## Tech Stack
 
-| Tool | Why |
-|------|-----|
-| React 19 | UI library |
-| Vite 5 | Build tool / dev server |
-| Tailwind CSS v3 | All styling — no component libraries |
-| Browser Fetch API | HTTP requests |
-| localStorage | Client-side persistence |
+| Tool | Purpose |
+|------|---------|
+| React 19 | UI framework with functional components and hooks |
+| Vite 5 | Fast development server and build tool |
+| Tailwind CSS v3 | All styling with custom colors and typography |
+| Browser Fetch API | HTTP requests to Picsum |
+| localStorage | Persistent storage for favourites |
 
-No component libraries. No Bootstrap. No MUI. No icon libraries. Heart icon is inline SVG.
+No component libraries (no MUI, AntD, Bootstrap). No external icon libraries (all inline SVGs).
 
 ---
 
-## Features
+## Key Features & React Implementation
 
-1. **Photo fetching** — Picsum API with loading spinner + error handling
-2. **Responsive grid** — 4 cols (desktop) -> 2 (tablet) -> 1 (mobile)
-3. **Author search** — real-time, case-insensitive, client-side only
-4. **Favourites** — managed with `useReducer`, persisted to localStorage
-5. **Custom hook** — `useFetchPhotos` separates data logic from UI
-6. **`useCallback`** — stable search handler reference
-7. **`useMemo`** — memoised filtered photo list
+1. **Picsum API integration** — fetched via custom hook `useFetchPhotos` with loading and error states.
+2. **Responsive grid** — 4 columns on desktop (`lg:grid-cols-4`), 2 on tablet (`sm:grid-cols-2`), 1 on mobile (`grid-cols-1`).
+3. **Author search** — client-side, real-time, case-insensitive filter.
+4. **Favourites with `useReducer`** — `TOGGLE_FAVORITE` action, ID array, lazy init from localStorage, synchronized with `useEffect`.
+5. **Custom Hook (`useFetchPhotos`)** — returns `{ photos, loading, error }`, consumed by Gallery.
+6. **`useCallback`** — stabilizes the search input handler and toggle handlers.
+7. **`useMemo`** — memoises the filtered photo list based on photos, search query, active nav tab, and favorites.
 
 ---
 
@@ -45,20 +46,26 @@ No component libraries. No Bootstrap. No MUI. No icon libraries. Heart icon is i
 photo-gallery/
 ├── src/
 │   ├── components/
-│   │   ├── Gallery.jsx          # main component, orchestrates everything
-│   │   ├── PhotoCard.jsx        # individual photo card
-│   │   ├── SearchBar.jsx        # search input
-│   │   ├── LoadingSpinner.jsx   # loading state
-│   │   └── ErrorMessage.jsx     # error state
+│   │   ├── Sidebar.jsx          # Left vertical navigation (logo, nav items, footer)
+│   │   ├── TopBar.jsx           # Library frame counter + Import button
+│   │   ├── Gallery.jsx          # Main workspace: hero, search bar, grid, states
+│   │   ├── PhotoCard.jsx        # Individual card: image, #frame, author, heart
+│   │   ├── SearchBar.jsx        # Search input with results badge and filters
+│   │   ├── ImportPanel.jsx      # Right drawer: search, tabs, collection list
+│   │   ├── CollectionCard.jsx   # Interactive collection card with checkboxes
+│   │   ├── LoadingSpinner.jsx   # Geometric loader matching aesthetic
+│   │   └── ErrorMessage.jsx     # Bordered error state with error code
 │   ├── hooks/
-│   │   └── useFetchPhotos.js    # custom hook for Picsum API
+│   │   └── useFetchPhotos.js    # Custom hook wrapping Picsum fetch + AbortController
 │   ├── reducers/
-│   │   └── favoritesReducer.js  # pure reducer + lazy initializer
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── index.css                # Tailwind directives
-├── index.html
-├── tailwind.config.js
+│   │   └── favoritesReducer.js  # Pure reducer for TOGGLE_FAVORITE + initFavorites
+│   ├── data/
+│   │   └── mockCollections.js   # Prototype data for collection import drawer
+│   ├── App.jsx                  # Master 3-column layout coordination
+│   ├── main.jsx                 # Entry point
+│   └── index.css                # Tailwind directives and utility classes
+├── index.html                   # HTML template with Space Grotesk & IBM Plex Mono fonts
+├── tailwind.config.js           # Palette (#F5F3EE, #101010, #2428FF, #DFFF00, #F15A36)
 ├── postcss.config.js
 ├── vite.config.js
 └── package.json
@@ -66,141 +73,30 @@ photo-gallery/
 
 ---
 
-## Installation & Running
+## Running the Project
 
 ```bash
-# clone the repo
-git clone <your-repo-url>
-cd photo-gallery
-
 # install dependencies
 npm install
 
-# start dev server
+# start local development server
 npm run dev
 # opens at http://localhost:5173
 
-# production build
+# create production build
 npm run build
 ```
 
 ---
 
-## API Integration
+## How it works
 
-**Endpoint:** `https://picsum.photos/v2/list?limit=30`
+### 1. `useFetchPhotos`
+Lives in `src/hooks/useFetchPhotos.js`. Fetches `https://picsum.photos/v2/list?limit=30` once when the component mounts. Returns `{ photos, loading, error }`. An `AbortController` is used to cancel ongoing requests if the component unmounts prematurely.
 
-Returns an array of 30 photo objects. We use:
-- `id` as unique React key
-- `author` displayed below each photo
-- `download_url` as the image src
+### 2. `favoritesReducer`
+Lives in `src/reducers/favoritesReducer.js`. Pure function handling `TOGGLE_FAVORITE`. If a photo ID is already in the list, it filters it out; otherwise, it appends it. Stored in `localStorage` under `celebrare-favorites`. Reading occurs once on mount using lazy initialization (`useReducer(favoritesReducer, undefined, initFavorites)`), and writing happens in `Gallery.jsx` inside a `useEffect` whenever `favorites` updates.
 
-The request is made once on mount. No re-fetching on search.
-
----
-
-## useFetchPhotos — Custom Hook
-
-Lives in `src/hooks/useFetchPhotos.js`.
-
-```js
-const { photos, loading, error } = useFetchPhotos();
-```
-
-- Fires the API call inside a `useEffect` with empty deps (run once on mount)
-- Uses `AbortController` to cancel if component unmounts before fetch completes
-- Sets `loading: true` before the call, `loading: false` in the `finally` block
-- If `response.ok` is false, throws a descriptive error
-- Catch block ignores `AbortError`, surfaces everything else as `error`
-- Gallery consumes this hook and does not fetch anything directly
-
----
-
-## Favourites Reducer
-
-Lives in `src/reducers/favoritesReducer.js`.
-
-**Action:** `TOGGLE_FAVORITE` with payload `{ id }`
-
-Logic:
-- If ID is already in state: remove it (unfavourite)
-- If ID is not in state: add it (favourite)
-
-The reducer is **pure** — no localStorage access inside it.
-
-**Lazy initializer:** `initFavorites()` reads localStorage once when `useReducer` first mounts. After that, a `useEffect` in Gallery writes to localStorage whenever `favorites` changes.
-
-Storage key: `celebrare-favorites`
-
-Both read and write are wrapped in try/catch so the app won't crash in restricted environments.
-
----
-
-## localStorage Persistence
-
-```js
-// read once via lazy initializer
-const [favorites, dispatch] = useReducer(favoritesReducer, undefined, initFavorites);
-
-// write on every change
-useEffect(() => {
-  localStorage.setItem('celebrare-favorites', JSON.stringify(favorites));
-}, [favorites]);
-```
-
-On refresh: `initFavorites` reads the stored JSON and hearts show their previous state immediately.
-
----
-
-## useCallback
-
-```js
-const handleSearchChange = useCallback((e) => {
-  setSearchTerm(e.target.value);
-}, []);
-```
-
-Keeps the handler reference stable across renders. Without it, a new function is created on every render and passed as a prop to SearchBar, causing unnecessary re-renders.
-
----
-
-## useMemo
-
-```js
-const filteredPhotos = useMemo(() => {
-  const trimmed = searchTerm.trim().toLowerCase();
-  if (!trimmed) return photos;
-  return photos.filter((p) => p.author.toLowerCase().includes(trimmed));
-}, [photos, searchTerm]);
-```
-
-Recalculates only when `photos` or `searchTerm` actually changes. Avoids re-running the filter on every unrelated render.
-
----
-
-## Responsive Design
-
-| Breakpoint | Columns | Tailwind class |
-|------------|---------|----------------|
-| Mobile (default) | 1 | `grid-cols-1` |
-| Tablet (sm 640px+) | 2 | `sm:grid-cols-2` |
-| Desktop (lg 1024px+) | 4 | `lg:grid-cols-4` |
-
-Images use `aspect-[4/3]` + `object-cover` to maintain consistent card sizes without distortion.
-
----
-
-## Git Setup
-
-```bash
-git init
-git add .
-git commit -m "init: photo gallery for celebrare assignment"
-
-# create a public repo on GitHub, then:
-git remote add origin https://github.com/<your-username>/photo-gallery.git
-git branch -M main
-git push -u origin main
-```
-
-> Don't push until you're ready to submit.
+### 3. `useCallback` & `useMemo`
+- `useCallback` wraps `handleSearchChange` and `handleToggleFavorite` so their function references stay stable across renders.
+- `useMemo` computes `filteredPhotos` only when `photos`, `searchTerm`, `activeNav`, or `favorites` change.
