@@ -5,12 +5,11 @@ A visual photo archive built with React, Vite, and Tailwind CSS for Celebrare's 
 ## What it does
 
 - Fetches 30 photos from the Picsum Photos API on initial load
-- 3-column responsive layout: left navigation sidebar, central gallery workspace, and right-side interactive import drawer
+- 2-panel responsive layout: left navigation sidebar and central gallery workspace
 - Displays photos in a 4-column responsive grid on desktop (2 on tablet, 1 on mobile)
 - Metadata strip on every card with frame numbers (`#001`), photographer names, and interactive heart favourite buttons
 - Real-time author search filtering without re-fetching or reloading
 - Favourites state managed strictly via `useReducer`, persisted across browser refreshes via `localStorage`
-- Interactive right-side import panel prototype for discovering collections and selecting frames
 
 ---
 
@@ -47,21 +46,17 @@ photo-gallery/
 ├── src/
 │   ├── components/
 │   │   ├── Sidebar.jsx          # Left vertical navigation (logo, nav items, footer)
-│   │   ├── TopBar.jsx           # Library frame counter + Import button
+│   │   ├── TopBar.jsx           # Library frame counter badge
 │   │   ├── Gallery.jsx          # Main workspace: hero, search bar, grid, states
 │   │   ├── PhotoCard.jsx        # Individual card: image, #frame, author, heart
 │   │   ├── SearchBar.jsx        # Search input with results badge and filters
-│   │   ├── ImportPanel.jsx      # Right drawer: search, tabs, collection list
-│   │   ├── CollectionCard.jsx   # Interactive collection card with checkboxes
 │   │   ├── LoadingSpinner.jsx   # Geometric loader matching aesthetic
 │   │   └── ErrorMessage.jsx     # Bordered error state with error code
 │   ├── hooks/
 │   │   └── useFetchPhotos.js    # Custom hook wrapping Picsum fetch + AbortController
 │   ├── reducers/
 │   │   └── favoritesReducer.js  # Pure reducer for TOGGLE_FAVORITE + initFavorites
-│   ├── data/
-│   │   └── mockCollections.js   # Prototype data for collection import drawer
-│   ├── App.jsx                  # Master 3-column layout coordination
+│   ├── App.jsx                  # Master layout coordination
 │   ├── main.jsx                 # Entry point
 │   └── index.css                # Tailwind directives and utility classes
 ├── index.html                   # HTML template with Space Grotesk & IBM Plex Mono fonts

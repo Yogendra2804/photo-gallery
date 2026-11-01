@@ -9,7 +9,7 @@ import TopBar from './TopBar';
 
 const STORAGE_KEY = 'celebrare-favorites';
 
-export default function Gallery({ activeNav = 'gallery', onImportToggle }) {
+export default function Gallery({ activeNav = 'gallery' }) {
   // --- Requirement 6: Custom Hook ---
   const { photos, loading, error } = useFetchPhotos();
 
@@ -56,11 +56,11 @@ export default function Gallery({ activeNav = 'gallery', onImportToggle }) {
 
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-fi-canvas overflow-y-auto">
-      {/* ── Top Bar (Right-aligned counter & Import button) ── */}
-      <TopBar photoCount={photos.length} onImportToggle={onImportToggle} />
+      {/* ── Top Bar ── */}
+      <TopBar photoCount={photos.length} />
 
       {/* ── Main Workspace Canvas ── */}
-      <div className="p-6 md:p-8 max-w-[1300px] w-full mx-auto">
+      <div className="p-6 md:p-8 max-w-[1400px] w-full mx-auto">
         {/* ── Editorial Asymmetric Hero Section ── */}
         <section className="mb-8" aria-label="Archive Overview">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
@@ -76,7 +76,7 @@ export default function Gallery({ activeNav = 'gallery', onImportToggle }) {
             {/* Right Column: Editorial Supporting Copy */}
             <div className="md:col-span-5 md:pl-6 md:border-l border-fi-border/20">
               <p className="font-sans text-fi-muted text-sm sm:text-base leading-relaxed max-w-sm">
-                Collect, discover and import photographs from creators and curated collections.
+                Collect and discover photographs from creators and curated collections.
               </p>
               {/* Warm Orange Accent Underline */}
               <div className="w-10 h-1 bg-fi-orange mt-3" aria-hidden="true" />
@@ -104,7 +104,7 @@ export default function Gallery({ activeNav = 'gallery', onImportToggle }) {
           <>
             {filteredPhotos.length > 0 ? (
               <section
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
                 aria-label="Photographs archive grid"
               >
                 {filteredPhotos.map((photo, index) => (
