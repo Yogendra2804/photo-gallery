@@ -33,42 +33,46 @@ const navItems = [
   },
 ];
 
-export default function Sidebar({ activeNav, onNavChange }) {
+export default function Sidebar({ activeNav = 'gallery', onNavChange }) {
   return (
     <>
-      {/* ── desktop sidebar ── */}
-      <aside className="hidden lg:flex flex-col w-[140px] shrink-0 border-r border-fi-border bg-fi-canvas h-screen">
+      {/* ── desktop / tablet sidebar (visible on md: >= 768px) ── */}
+      <aside className="hidden md:flex flex-col w-[145px] shrink-0 border-r border-fi-border bg-fi-canvas h-screen select-none">
 
         {/* logo */}
         <div className="px-4 pt-4 pb-5 border-b border-fi-border">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-fi-lime flex items-center justify-center shrink-0">
+          <button
+            onClick={() => onNavChange && onNavChange('gallery')}
+            className="flex items-center gap-2 text-left w-full focus:outline-none"
+            aria-label="FRAME INDEX Home"
+          >
+            <div className="w-7 h-7 bg-fi-lime border border-fi-border flex items-center justify-center shrink-0 shadow-[1px_1px_0px_#242424]">
               <span className="font-display font-black text-fi-ink text-sm leading-none">F</span>
             </div>
             <div className="leading-none">
               <p className="font-display font-black text-fi-ink text-[10px] tracking-widest uppercase leading-tight">FRAME</p>
               <p className="font-display font-black text-fi-ink text-[10px] tracking-widest uppercase leading-tight">INDEX</p>
             </div>
-          </div>
+          </button>
         </div>
 
         {/* nav */}
-        <nav className="flex flex-col gap-0.5 p-2 pt-3 flex-1" aria-label="Main navigation">
+        <nav className="flex flex-col gap-1 p-2 pt-3 flex-1" aria-label="Main navigation">
           {navItems.map((item) => {
             const isActive = activeNav === item.id;
             return (
               <button
                 key={item.id}
-                onClick={() => onNavChange(item.id)}
+                onClick={() => onNavChange && onNavChange(item.id)}
                 aria-current={isActive ? 'page' : undefined}
-                className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors
-                  ${isActive
-                    ? 'bg-fi-blue text-white'
-                    : 'text-fi-ink hover:bg-fi-ink/5'
-                  }`}
+                className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors border ${
+                  isActive
+                    ? 'bg-fi-blue text-white border-fi-blue shadow-[1px_1px_0px_#242424]'
+                    : 'text-fi-ink border-transparent hover:bg-white hover:border-fi-border/30'
+                }`}
               >
                 {item.icon}
-                <span className="font-sans text-xs font-semibold">{item.label}</span>
+                <span className="font-sans text-xs font-bold tracking-tight">{item.label}</span>
               </button>
             );
           })}
@@ -76,26 +80,25 @@ export default function Sidebar({ activeNav, onNavChange }) {
 
         {/* bottom label */}
         <div className="border-t border-fi-border overflow-hidden">
-          {/* decorative architecture photo */}
-          <div className="h-24 overflow-hidden">
+          <div className="h-20 overflow-hidden bg-neutral-200">
             <img
-              src="https://picsum.photos/id/1060/140/100"
+              src="https://picsum.photos/id/1060/145/80"
               alt=""
               aria-hidden="true"
-              className="w-full h-full object-cover grayscale opacity-60"
+              className="w-full h-full object-cover grayscale opacity-70"
             />
           </div>
           <div className="px-3 py-2 bg-fi-ink">
-            <p className="font-mono text-[8px] text-fi-canvas/60 leading-tight uppercase tracking-wider">
+            <p className="font-mono text-[8px] text-fi-canvas/80 leading-tight uppercase tracking-wider">
               VISUAL<br/>COLLECTION<br/>TOOL — v1.0
             </p>
           </div>
         </div>
       </aside>
 
-      {/* ── mobile bottom nav ── */}
+      {/* ── mobile bottom nav (< 768px) ── */}
       <nav
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-fi-canvas border-t border-fi-border flex"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-fi-canvas border-t border-fi-border flex"
         aria-label="Mobile navigation"
       >
         {navItems.map((item) => {
@@ -103,13 +106,13 @@ export default function Sidebar({ activeNav, onNavChange }) {
           return (
             <button
               key={item.id}
-              onClick={() => onNavChange(item.id)}
+              onClick={() => onNavChange && onNavChange(item.id)}
               aria-current={isActive ? 'page' : undefined}
-              className={`flex-1 flex flex-col items-center gap-1 py-3 text-xs font-semibold transition-colors
-                ${isActive ? 'text-fi-blue' : 'text-fi-muted'}`}
+              className={`flex-1 flex flex-col items-center gap-1 py-2.5 text-xs font-bold transition-colors
+                ${isActive ? 'text-fi-blue bg-white' : 'text-fi-muted'}`}
             >
               {item.icon}
-              <span>{item.label}</span>
+              <span className="font-mono text-[10px] uppercase tracking-wider">{item.label}</span>
             </button>
           );
         })}

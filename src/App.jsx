@@ -11,7 +11,7 @@ export default function App() {
       <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
 
       {/* ── 2. Center Workspace (Gallery) ── */}
-      <Gallery activeNav={activeNav} />
+      <Gallery activeNav={activeNav} onNavChange={setActiveNav} />
     </div>
   );
 }
